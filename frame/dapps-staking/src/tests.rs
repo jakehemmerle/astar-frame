@@ -1293,6 +1293,57 @@ fn new_era_forcing() {
 }
 
 #[test]
+fn new_era_length_is_always_blocks_per_era() {
+    ExternalityBuilder::build().execute_with(|| {
+        initialize_first_block();
+        let blocks_per_era = mock::BLOCKS_PER_ERA;
+
+        // go to beginning of an era
+        advance_to_era(mock::DappsStaking::current_era() + 1);
+
+        // record era number and block number
+        let start_era = mock::DappsStaking::current_era();
+        let starting_block_number = System::block_number();
+
+        // go to next era
+        advance_to_era(mock::DappsStaking::current_era() + 1);
+        let ending_block_number = System::block_number();
+
+        // make sure block number difference is is blocks_per_era
+        assert_eq!(mock::DappsStaking::current_era(), start_era + 1);
+        assert_eq!(ending_block_number - starting_block_number, blocks_per_era);
+    })
+}
+
+#[test]
+fn new_forced_era_length_is_always_blocks_per_era() {
+    ExternalityBuilder::build().execute_with(|| {
+        initialize_first_block();
+        let blocks_per_era = mock::BLOCKS_PER_ERA;
+
+        // go to beginning of an era
+        advance_to_era(mock::DappsStaking::current_era() + 1);
+
+        // go to middle of era
+        run_for_blocks(1); // can be any number between 0 and blocks_per_era
+
+        // force new era
+        <ForceEra<TestRuntime>>::put(Forcing::ForceNew);
+        run_for_blocks(1); // calls on_initialize()
+
+        // note the start block number of new (forced) era
+        let start_block_number = System::block_number();
+
+        // go to start of next era
+        advance_to_era(mock::DappsStaking::current_era() + 1);
+
+        // show the length of the forced era is equal to blocks_per_era
+        let end_block_number = System::block_number();
+        assert_eq!(end_block_number - start_block_number, blocks_per_era);
+    })
+}
+
+#[test]
 fn claim_contract_not_registered() {
     ExternalityBuilder::build().execute_with(|| {
         initialize_first_block();
