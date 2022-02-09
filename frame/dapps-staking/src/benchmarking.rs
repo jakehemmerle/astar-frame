@@ -200,6 +200,27 @@ benchmarks! {
     force_new_era {
     }: _(RawOrigin::Root)
 
+    on_initialize_not_new_era {
+        initialize::<T>();
+        let era_before_bench = DappsStaking::<T>::current_era();
+    }: {
+        DappsStaking::<T>::on_initialize(System::<T>::block_number());
+    }
+    verify {
+        assert_eq!(DappsStaking::<T>::current_era(), era_before_bench);
+    }
+
+    on_initialize_new_era {
+        initialize::<T>();
+        let era_before_bench = DappsStaking::<T>::current_era();
+        ForceEra::<T>::put(Forcing::ForceNew);
+    }: {
+        DappsStaking::<T>::on_initialize(System::<T>::block_number());
+    }
+    verify {
+        assert_eq!(DappsStaking::<T>::current_era(), era_before_bench + 1);
+    }
+
 }
 
 impl_benchmark_test_suite!(

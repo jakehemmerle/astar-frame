@@ -25,6 +25,8 @@ pub trait WeightInfo {
     /// n - total number of payees
     fn claim(n: u32) -> Weight;
     fn force_new_era() -> Weight;
+	fn on_initialize_not_new_era() -> Weight;
+	fn on_initialize_new_era() -> Weight;
 }
 
 /// Weights for pallet_staking using the Substrate node and recommended hardware.
@@ -114,6 +116,26 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 		(1_824_000 as Weight)
 			.saturating_add(T::DbWeight::get().writes(1 as Weight))
 	}
+
+	// Storage: DappsStaking PalletDisabled (r:1 w:0)
+	// Storage: DappsStaking ForceEra (r:1 w:0)
+	// Storage: DappsStaking CurrentEra (r:1 w:0)
+	// Storage: DappsStaking NextEraStartingBlock (r:1 w:0)
+	fn on_initialize_not_new_era() -> Weight {
+		(33_000_000 as Weight)
+			.saturating_add(T::DbWeight::get().reads(4 as Weight))
+	}
+	// Storage: DappsStaking PalletDisabled (r:1 w:0)
+	// Storage: DappsStaking ForceEra (r:1 w:1)
+	// Storage: DappsStaking CurrentEra (r:1 w:1)
+	// Storage: DappsStaking NextEraStartingBlock (r:1 w:1)
+	// Storage: DappsStaking BlockRewardAccumulator (r:1 w:0)
+	// Storage: DappsStaking EraRewardsAndStakes (r:1 w:2)
+	fn on_initialize_new_era() -> Weight {
+		(65_000_000 as Weight)
+			.saturating_add(T::DbWeight::get().reads(6 as Weight))
+			.saturating_add(T::DbWeight::get().writes(5 as Weight))
+	}
 }
 
 
@@ -202,5 +224,24 @@ impl WeightInfo for () {
 	fn force_new_era() -> Weight {
 		(1_824_000 as Weight)
 			.saturating_add(RocksDbWeight::get().writes(1 as Weight))
+	}
+	// Storage: DappsStaking PalletDisabled (r:1 w:0)
+	// Storage: DappsStaking ForceEra (r:1 w:0)
+	// Storage: DappsStaking CurrentEra (r:1 w:0)
+	// Storage: DappsStaking NextEraStartingBlock (r:1 w:0)
+	fn on_initialize_not_new_era() -> Weight {
+		(33_000_000 as Weight)
+			.saturating_add(RocksDbWeight::get().reads(4 as Weight))
+	}
+	// Storage: DappsStaking PalletDisabled (r:1 w:0)
+	// Storage: DappsStaking ForceEra (r:1 w:1)
+	// Storage: DappsStaking CurrentEra (r:1 w:1)
+	// Storage: DappsStaking NextEraStartingBlock (r:1 w:1)
+	// Storage: DappsStaking BlockRewardAccumulator (r:1 w:0)
+	// Storage: DappsStaking EraRewardsAndStakes (r:1 w:2)
+	fn on_initialize_new_era() -> Weight {
+		(65_000_000 as Weight)
+			.saturating_add(RocksDbWeight::get().reads(6 as Weight))
+			.saturating_add(RocksDbWeight::get().writes(5 as Weight))
 	}
 }
