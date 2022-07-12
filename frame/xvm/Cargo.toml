@@ -1,0 +1,42 @@
+[package]
+name = "pallet-xvm"
+authors = [ "Stake Technologies" ]
+edition = "2021"
+version = "1.2.0"
+
+[dependencies]
+log = { version = "0.4", default-features = false }
+serde = { version = "1.0.106", optional = true }
+
+# Substrate
+frame-support = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+frame-system = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+parity-scale-codec = { version = "3.0.0", default-features = false, features = [ "derive" ] }
+scale-info = { version = "2.0", default-features = false, features = [ "derive" ] }
+sp-io = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+sp-runtime = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+sp-std = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", default-features = false }
+
+# Benchmarks
+frame-benchmarking = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24", optional = true, default-features = false }
+
+[dev-dependencies]
+sp-core = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.24" }
+
+[features]
+default = [ "std" ]
+std = [
+	"frame-support/std",
+	"frame-system/std",
+	"parity-scale-codec/std",
+	"scale-info/std",
+	"serde",
+	"sp-io/std",
+	"sp-runtime/std",
+	"sp-std/std",
+]
+
+runtime-benchmarks = [
+	"frame-benchmarking",
+]
+try-runtime = [ "frame-support/try-runtime" ]
