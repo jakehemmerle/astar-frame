@@ -337,6 +337,17 @@ pub mod pallet {
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
+        /// Set StorageVersion from an extrinsic.
+        ///
+        /// The dispatch origin must be Root.
+        #[pallet::weight(T::WeightInfo::force_new_era())]
+        pub fn set_storage_version(origin: OriginFor<T>, version: Version) -> DispatchResult {
+            Self::ensure_pallet_enabled()?;
+            ensure_root(origin)?;
+            StorageVersion::<T>::set(version);
+            Ok(())
+        }
+
         /// Used to register contract for dapps staking.
         /// The origin account used is treated as the `developer` account.
         ///
