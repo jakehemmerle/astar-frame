@@ -66,6 +66,11 @@ pub mod pallet {
         #[pallet::constant]
         type MinimumStakingAmount: Get<BalanceOf<Self>>;
 
+        /// Minimum amount user must stake per call.
+        /// Must be larger than MinimumStakingAmount
+        #[pallet::constant]
+        type MinimumStakingAmountPerCall: Get<BalanceOf<Self>>;
+
         /// Dapps staking pallet Id
         #[pallet::constant]
         type PalletId: Get<PalletId>;
@@ -252,8 +257,10 @@ pub mod pallet {
         UpgradeTooHeavy,
         /// Can not stake with zero value.
         StakingWithNoValue,
-        /// Can not stake with value less than minimum staking value
+        /// Can not stake with value less than minimum staking amount per contract.
         InsufficientValue,
+        /// Can not stake with value less than minimum staking amount per call.
+        InsufficientValuePerCall,
         /// Number of stakers per contract exceeded.
         MaxNumberOfStakersExceeded,
         /// Targets must be operated contracts
@@ -325,7 +332,10 @@ pub mod pallet {
                     blocks_per_era
                 } else {
                     let blocks_per_era = T::BlockPerEra::get();
-                    println!("blocks_per_era not set. Setting to T::BlockPerEra value: {}", blocks_per_era);
+                    println!(
+                        "blocks_per_era not set. Setting to T::BlockPerEra value: {}",
+                        blocks_per_era
+                    );
                     BlocksPerEra::<T>::put(blocks_per_era);
                     blocks_per_era
                 };
@@ -1049,6 +1059,12 @@ pub mod pallet {
                 // One spot should remain for compounding reward claim call
                 staker_info.len() < T::MaxEraStakeValues::get(),
                 Error::<T>::TooManyEraStakeValues
+            );
+            
+            // TODO: fix incompatable tests and add new one testing functionality
+            ensure!(
+                value >= T::MinimumStakingAmountPerCall::get(),
+                Error::<T>::InsufficientValuePerCall,
             );
             ensure!(
                 staker_info.latest_staked_value() >= T::MinimumStakingAmount::get(),

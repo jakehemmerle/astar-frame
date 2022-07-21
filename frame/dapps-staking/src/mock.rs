@@ -27,6 +27,7 @@ pub(crate) const EXISTENTIAL_DEPOSIT: Balance = 2;
 pub(crate) const MAX_NUMBER_OF_STAKERS: u32 = 4;
 /// Value shouldn't be less than 2 for testing purposes, otherwise we cannot test certain corner cases.
 pub(crate) const MINIMUM_STAKING_AMOUNT: Balance = 10;
+pub(crate) const MINIMUM_STAKING_AMOUNT_PER_CALL: Balance = 2;
 pub(crate) const MINIMUM_REMAINING_AMOUNT: Balance = 1;
 pub(crate) const MAX_UNLOCKING_CHUNKS: u32 = 4;
 pub(crate) const UNBONDING_PERIOD: EraIndex = 3;
@@ -119,6 +120,7 @@ parameter_types! {
     pub const BlockPerEra: BlockNumber = BLOCKS_PER_ERA;
     pub const MaxNumberOfStakersPerContract: u32 = MAX_NUMBER_OF_STAKERS;
     pub const MinimumStakingAmount: Balance = MINIMUM_STAKING_AMOUNT;
+    pub const MinimumStakingAmountPerCall: Balance = MINIMUM_STAKING_AMOUNT_PER_CALL; // in practice should be any value between 0 and MINIMUM_STAKING_AMOUNT.
     pub const DappsStakingPalletId: PalletId = PalletId(*b"mokdpstk");
     pub const MinimumRemainingAmount: Balance = MINIMUM_REMAINING_AMOUNT;
     pub const MaxUnlockingChunks: u32 = MAX_UNLOCKING_CHUNKS;
@@ -135,6 +137,7 @@ impl pallet_dapps_staking::Config for TestRuntime {
     type WeightInfo = weights::SubstrateWeight<TestRuntime>;
     type MaxNumberOfStakersPerContract = MaxNumberOfStakersPerContract;
     type MinimumStakingAmount = MinimumStakingAmount;
+    type MinimumStakingAmountPerCall = MinimumStakingAmountPerCall;
     type PalletId = DappsStakingPalletId;
     type MinimumRemainingAmount = MinimumRemainingAmount;
     type MaxUnlockingChunks = MaxUnlockingChunks;
