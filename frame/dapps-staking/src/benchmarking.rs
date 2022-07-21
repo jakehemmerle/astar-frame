@@ -18,6 +18,7 @@ const DAPP_BLOCK_REWARD: u32 = 9876u32;
 /// Also initializes the first block which should start a new era.
 fn initialize<T: Config>() {
     // Remove everything from storage.
+    BlocksPerEra::<T>::kill();
     Ledger::<T>::remove_all(None);
     RegisteredDevelopers::<T>::remove_all(None);
     RegisteredDapps::<T>::remove_all(None);

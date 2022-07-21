@@ -257,7 +257,7 @@ impl<AccountId32> pallet_dapps_staking::IsContract for MockSmartContract<Account
 
 parameter_types! {
     pub const RegisterDeposit: Balance = REGISTER_DEPOSIT;
-    pub const BlockPerEra: BlockNumber = BLOCKS_PER_ERA;
+    // pub const BlockPerEra: BlockNumber = BLOCKS_PER_ERA;
     pub const MaxNumberOfStakersPerContract: u32 = MAX_NUMBER_OF_STAKERS;
     pub const MinimumStakingAmount: Balance = MINIMUM_STAKING_AMOUNT;
     pub const DappsStakingPalletId: PalletId = PalletId(*b"mokdpstk");

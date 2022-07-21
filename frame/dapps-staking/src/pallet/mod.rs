@@ -102,6 +102,12 @@ pub mod pallet {
         type WeightInfo: WeightInfo;
     }
 
+    /// The blocks per dApps staking era.
+    /// NOTE: This needs to be set in `on_runtime_upgrade()`.
+    #[pallet::storage]
+    #[pallet::getter(fn blocks_per_era)]
+    pub type BlocksPerEra<T> = StorageValue<_, BlockNumberFor<T>, ValueQuery>;
+
     /// Denotes whether pallet is disabled (in maintenance mode) or not
     #[pallet::storage]
     #[pallet::getter(fn pallet_disabled)]
@@ -312,7 +318,18 @@ pub mod pallet {
 
             // Value is compared to 1 since genesis block is ignored
             if now >= next_era_starting_block || force_new_era || previous_era.is_zero() {
-                let blocks_per_era = T::BlockPerEra::get();
+                // again, this should be not here, but set inside of on_runtime_upgrade().
+                let blocks_per_era = if BlocksPerEra::<T>::exists() {
+                    println!("blocks_per_era: {}", Self::blocks_per_era());
+                    let blocks_per_era = Self::blocks_per_era();
+                    blocks_per_era
+                } else {
+                    let blocks_per_era = T::BlockPerEra::get();
+                    println!("blocks_per_era not set. Setting to T::BlockPerEra value: {}", blocks_per_era);
+                    BlocksPerEra::<T>::put(blocks_per_era);
+                    blocks_per_era
+                };
+
                 let next_era = previous_era + 1;
                 CurrentEra::<T>::put(next_era);
 
